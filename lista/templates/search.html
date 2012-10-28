@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <style type="text/css">
+        table {
+            border-width: 3px;
+            border-spacing: 0px;
+            border-style: outset;
+            border-color: green;
+            border-collapse: separate;
+            background-color: white;
+        }
+        table th {
+            border-width: 1px;
+            padding: 3px;
+            border-style: inset;
+            border-color: gray;
+            background-color: white;
+            -moz-border-radius: ;
+        }
+        table td {
+            border-width: 1px;
+            padding: 3px;
+            border-style: inset;
+            border-color: gray;
+            background-color: white;
+            -moz-border-radius: ;
+        }
+    </style>
+
+    <h1>Zapytanie</h1>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button>Wyślij zapytanie</button>
+    </form>
+
+
+
+    {% if results %}
+        <h2>Wyniki</h2>
+        <table>
+            <thead>
+            <tr>
+                <td>
+                    Lp.
+                </td>
+                <td>
+                    Nazwa czasopisma:
+                </td>
+                <td>
+                    Ilość punktów
+                </td>
+                <td>
+                    ISSN
+                </td>
+                <td>
+                    Kategoria
+                </td>
+            </tr>
+            </thead>
+            <tbody>
+            {% for r in results %}
+                <tr>
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+                    <td>
+                        {{ r.name }}
+                    </td>
+                    <td>
+                        {{ r.pts }}
+                    </td>
+                    <td>
+                        {{ r.issn }}
+                    </td>
+                    <td>
+                        {{ r.get_cathegory_display }}
+                    </td>
+                </tr>
+
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock body %}
