@@ -10,7 +10,7 @@ categories = (
 
 class Journal(models.Model):
 
-    issn = models.CharField(max_length=9, primary_key=True)
+    issn = models.CharField(max_length=100, primary_key=True)
     name = models.TextField(verbose_name="Nazwa czasopisma", db_index=True)
     pts = models.PositiveSmallIntegerField(verbose_name="Punkty za czasopismo", db_index=True)
     cathegory = models.PositiveSmallIntegerField(verbose_name="Kategoria", db_index=True, choices=categories)

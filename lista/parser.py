@@ -1,61 +1,89 @@
 # coding=utf-8
+from copy import copy
+import csv
+import subprocess
+
 __author__ = 'jb'
 
-import os, re
+import os
 
 import tempfile
 from stdnum import issn
-import shutil
+
+import re
+
+RE = re.compile("[\dX\-]+")
+
 DIRNAME = os.path.split(__file__)[0]
 
 DATA_FILE = "lista_c.pdf"
 
-#ITEM_PATTERN = re.compile("\s*^\s*(\d+)\s*$\s*^\s*(\w*[\s\w]*\w+)+\s*$\s*^\s*(\d{4}-[\d]{3}[\dX])\s*$\s*^\s*(\d{2})\s*$\s*", re.MULTILINE)
-#ITEM_PATTERN  = re.compile("\s*(\d+)\s*$\s*(\w*[\s\w]*\w+)\s*$\s*(\d{4}-[\d]{3}[\dX])\s*$\s*(\d{2})+\s*".replace("\w", "[a-zA-Z]"), re.MULTILINE)
+executable = os.path.join(os.path.abspath(os.path.split(__file__)[0]), "extracttab.py")
 
-ITEM_PATTERN  = re.compile("^\s*(\d+)\s+((?:[^\d]+)|(?:[^\-]+))\s+(\d{4}-[\d]{3}[\dX])\s+(\d{2})\s*$", re.MULTILINE | re.UNICODE)
+def parse_page(args, last_no, page):
 
-def parse_file(data_file = DATA_FILE):
+    fname = tempfile.mktemp()
 
-    import subprocess
+    args.extend(['-p', str(page), '-o', fname])
 
-    tmpdir = tempfile.mkdtemp()
+    subprocess.check_call(args)
 
-    file = os.path.join(tmpdir, "data.txt")
+    warnings = []
+    rows = []
 
-    data_file = os.path.join(DIRNAME, "data", data_file)
+    with open(fname) as f:
+        r = csv.reader(f)
+        for row in r:
+            if  not row[0]:
+                continue
 
-    subprocess.check_call(["pdftotext",  "-raw", data_file, file])
+            try:
+                item_no = int(row[0])
+                int(row[3])
+            except ValueError:
+                continue
 
-    data = []
 
-    with open(file) as f:
-        DATA = f.read()
+            if not re.match(RE, row[2]) or not '-' in row[2]:
+                continue
 
-        groups = re.findall(ITEM_PATTERN, DATA)
+            if item_no != last_no + 1:
+                warnings.append("Na stronie {} po czasopiśmie nr {} jest {}".format(page, last_no, item_no))
 
-    shutil.rmtree(tmpdir)
 
-    return groups
 
-def check_groups(groups):
+            rows.append(row)
+
+            last_no = item_no
+
+        return rows, warnings, last_no
+
+
+def parse_file(last_page, data_file = DATA_FILE, first_page = 0):
+
+    data_file = os.path.join(DIRNAME, 'data', data_file)
+
+    args = [executable, '-i', os.path.abspath(data_file), '-t', 'table_csv']
+
+    last_no = 1
+
+    for page in range(first_page, last_page):
+        result =  parse_page(copy(args), last_no, page)
+        last_no = result[-1]
+        yield result
+
+def check_rows(groups):
     last_id = None
     errors = []
     for group in groups:
-        this_id = int(group[0])
-        if last_id is not None and not last_id == this_id -1:
-            errors.append(u"Po czasopiśmie numer {} jest {}".format(last_id,  this_id))
-            last_id = None
-        else:
-            last_id =  this_id
         if not issn.is_valid(group[2]):
             errors.append(u"Invalid issn '{}'".format(group[2]))
 
     return errors
 
 if __name__ == "__main__":
-    data = parse_file(DATA_FILE)
-    print data
-    check_groups(data)
+    for rows, errors, __ in parse_file(49, DATA_FILE, 1):
+        print(errors)
+        print(check_rows(rows))
 
 

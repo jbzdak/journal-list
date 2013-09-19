@@ -2,4 +2,5 @@ django
 psycopg2
 python-stdnum
 south
+numpy
 
