@@ -37,7 +37,7 @@
 
 
 
-    {% if results %}
+    {% if results or results|length == 0 %}
         <h2>Wyniki</h2>
         <table>
             <thead>
@@ -78,9 +78,13 @@
                         {{ r.get_cathegory_display }}
                     </td>
                 </tr>
-
+            {% empty %}
+                <tr>
+                    <td>Brak wyników</td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
+
     {% endif %}
 {% endblock body %}

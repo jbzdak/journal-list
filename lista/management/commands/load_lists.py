@@ -8,11 +8,15 @@ from lista import parser
 from lista import models
 
 
-
+CATH = (
+    #("lista_a.pdf", 1),
+    ("lista_b.pdf", 2),
+    #("lista_c.pdf", 3)
+)
 class Command(NoArgsCommand):
 
     def handle_noargs(self, **options):
-        for file, cathegory in (("lista_a.pdf", 1), ("lista_b.pdf", 2), ("lista_c.pdf", 3)):
+        for file, cathegory in CATH:
             erors = []
             print ("Importing: {}".format(file))
 

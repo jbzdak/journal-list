@@ -29,8 +29,10 @@ def search_fun(name = None, pts = None, issn = None, cathegory = None, order_by 
         q_objects.append(Q(pts__gte = pts))
     if issn:
         q_objects.append(Q(issn__icontains = issn))
-    if cathegory and cathegory != 0:
-        q_objects.append(Q(cathegory = cathegory))
+    if cathegory:
+        cathegory = int(cathegory)
+        if cathegory != 0:
+            q_objects.append(Q(cathegory = cathegory))
 
     if name:
         name_non_pl = name
@@ -53,6 +55,8 @@ def search_fun(name = None, pts = None, issn = None, cathegory = None, order_by 
             qs = qs.order_by("pts", "name", "issn")
         else:
             qs = qs.order_by("name")
+
+#    print qs.query
     return qs
 
 def search(request):

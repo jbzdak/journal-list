@@ -5,6 +5,7 @@ import os, re
 
 import tempfile
 from stdnum import issn
+import shutil
 DIRNAME = os.path.split(__file__)[0]
 
 DATA_FILE = "lista_c.pdf"
@@ -33,6 +34,8 @@ def parse_file(data_file = DATA_FILE):
 
         groups = re.findall(ITEM_PATTERN, DATA)
 
+    shutil.rmtree(tmpdir)
+
     return groups
 
 def check_groups(groups):
@@ -48,9 +51,7 @@ def check_groups(groups):
         if not issn.is_valid(group[2]):
             errors.append(u"Invalid issn '{}'".format(group[2]))
 
-    print errors
-
-    print len(errors)
+    return errors
 
 if __name__ == "__main__":
     data = parse_file(DATA_FILE)
