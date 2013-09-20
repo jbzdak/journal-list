@@ -1,14 +1,13 @@
 # coding=utf-8
 # Create your views here.
+from itertools import chain
 from django.db.models import Q
 from django.template.response import TemplateResponse
 
 import forms
 import models
-import re
 
-
-def search_fun(name = None, pts = None, issn = None, cathegory = None, order_by = None):
+def search_fun(name = None, pts = None, issn = None, cathegory = None, order_by = None, phrase=False):
     name_replacements = (
         (u"ż", "z"),
         (u"ó", "o"),
@@ -39,10 +38,29 @@ def search_fun(name = None, pts = None, issn = None, cathegory = None, order_by 
         for pl, en in name_replacements:
             name_non_pl = name_non_pl.replace(pl, en)
             name_non_pl = name_non_pl.replace(pl.upper(), en.upper())
-        if name_non_pl != name:
-            qs = models.Journal.objects.filter(Q(Q(name__icontains =  name), *q_objects) | Q(Q(name__icontains =  name_non_pl), *q_objects))
+
+        if phrase:
+            if name_non_pl != name:
+                qs = models.Journal.objects.filter(Q(Q(name__icontains =  name), *q_objects) | Q(Q(name__icontains =  name_non_pl), *q_objects))
+            else:
+                qs = models.Journal.objects.filter(Q(name__icontains =  name), *q_objects)
         else:
-            qs = models.Journal.objects.filter(Q(name__icontains =  name), *q_objects)
+            q = []
+            if name_non_pl != name:
+                tokens = chain(name_non_pl.split(), name.split())
+            else:
+                tokens = name.split()
+            q = [Q(name__icontains = elem) for elem in tokens]
+
+            result = q[0]
+
+            for expr in q[1:]:
+                result = result | expr
+
+            q_objects.append(result)
+
+            qs = models.Journal.objects.filter(*q_objects)
+
     else:
         qs = models.Journal.objects.filter(*q_objects)
 
@@ -56,7 +74,7 @@ def search_fun(name = None, pts = None, issn = None, cathegory = None, order_by 
         else:
             qs = qs.order_by("name")
 
-#    print qs.query
+    print(repr(str(qs.query)))
     return qs
 
 def search(request):

@@ -18,6 +18,7 @@ class SearchForm(forms.Form):
     pts = forms.IntegerField(label=u"Więcej niż tyle punktów", required=False)
     issn = forms.CharField(label = "ISSS", required=False)
     order_by = forms.ChoiceField(choices=order_by, initial = 0, required=False)
+    phrase = forms.BooleanField(label="Znajdź wyrażenie", required=False)
     cathegory = forms.ChoiceField(choices=((0, "-----"),) + categories, initial = 0, required=False)
 
 
