@@ -39,27 +39,19 @@ def search_fun(name = None, pts = None, issn = None, cathegory = None, order_by 
             name_non_pl = name_non_pl.replace(pl, en)
             name_non_pl = name_non_pl.replace(pl.upper(), en.upper())
 
+        qs = models.Journal.objects.filter(*q_objects)
+
         if phrase:
             if name_non_pl != name:
-                qs = models.Journal.objects.filter(Q(Q(name__icontains =  name), *q_objects) | Q(Q(name__icontains =  name_non_pl), *q_objects))
+                qs = qs.filter(Q(name__icontains =  name) | Q(name__icontains =  name_non_pl))
             else:
-                qs = models.Journal.objects.filter(Q(name__icontains =  name), *q_objects)
+                qs = qs.filter(name__icontains =  name)
         else:
-            q = []
-            if name_non_pl != name:
-                tokens = chain(name_non_pl.split(), name.split())
-            else:
-                tokens = name.split()
-            q = [Q(name__icontains = elem) for elem in tokens]
-
-            result = q[0]
-
-            for expr in q[1:]:
-                result = result | expr
-
-            q_objects.append(result)
-
-            qs = models.Journal.objects.filter(*q_objects)
+            for pl, non_pl in zip(name_non_pl.split(), name.split()):
+                if pl != non_pl:
+                    qs = qs.filter(Q(name__icontains =  pl) | Q(name__icontains =  non_pl))
+                else:
+                    qs = qs.filter(name__icontains =  pl)
 
     else:
         qs = models.Journal.objects.filter(*q_objects)
@@ -70,11 +62,11 @@ def search_fun(name = None, pts = None, issn = None, cathegory = None, order_by 
         if order_by == 2:
             qs = qs.order_by("issn")
         elif order_by == 3:
-            qs = qs.order_by("pts", "name", "issn")
+            qs = qs.order_by("-pts", "name", "issn")
         else:
             qs = qs.order_by("name")
 
-    print(repr(str(qs.query)))
+  #  print(repr(str(qs.query)))
     return qs
 
 def search(request):
