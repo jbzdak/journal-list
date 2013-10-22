@@ -18,6 +18,17 @@ Dane w tej aplikacji zostały zaimportowane 19 września.
 
 Plik `setup.py` nie jest testowany --- produkcyjnie działa po prostu klon z gita.
 
+Uwagi
+-----
+
+#. Używacie aplikacji na własną odpowiedzialność, **problem importu danych
+   z plików pdf jest skomplikowany**.
+#. Wiem że kilkanaście czasopism jest źle zaimportowanych.
+#. Zachęcam wszystkich (w tym osoby nie programujące w Pythonie) do przesylania
+   udoskonaleń programu.
+#. W jakimś rozsądnym czasie opublikuję wersję online tej aplikacji pod adresem:
+   `lfitj.if.pw.edu.pl/listy <http://lfitj.if.pw.edu.pl/listy/>`_
+
 For english speaking people
 ---------------------------
 
