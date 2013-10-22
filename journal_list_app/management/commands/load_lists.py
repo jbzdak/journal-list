@@ -8,10 +8,10 @@ from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError, NoArgsCommand
 
-import lista
+import journal_list_app
 
-from lista import parser
-from lista import models
+from journal_list_app import parser
+from journal_list_app import models
 
 
 CATH = (

@@ -4,7 +4,7 @@ from django.conf.urls import patterns, include, url
 # from django.contrib import admin
 # admin.autodiscover()
 
-from lista.views import search
+from journal_list_app.views import search
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'kudrycka.views.home', name='home'),

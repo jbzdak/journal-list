@@ -16,6 +16,7 @@ W najbliższym czasie postaram się to wystawić gdzieś na publicznym serwerze.
 
 Dane w tej aplikacji zostały zaimportowane 19 września.
 
+Plik `setup.py` nie jest testowany --- produkcyjnie działa po prostyu
 
 For english speaking people
 ---------------------------
