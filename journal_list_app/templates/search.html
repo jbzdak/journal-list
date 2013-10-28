@@ -32,7 +32,19 @@
     <form method="POST">
         {% csrf_token %}
         {{ form.as_p }}
+
         <button>Wyślij zapytanie</button>
+        <p>
+            <strong>Instrukcja:</strong> jeśli w główne pole wpiszesz "foo bar"
+            zostaną wyszukane czasopisma które w nazwach mają ciągi znaków
+            "foo" oraz "bar".
+        </p>
+        <p>
+            Program próbuje uwzględnić to że niektóre polskie czasopisma zapisane
+            są bez polskich znaków, jeśli więc wpiszesz "żaźółć gęślą jaźń" to
+            zostaną wyszukane czasopisma zawierające "zazolc gesla jazn" oraz takie
+            zawierajace "żaźółć gęślą jaźń".
+        </p>
     </form>
 
 
