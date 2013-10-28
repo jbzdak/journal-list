@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from settings_shared import *
+from .settings_shared import *
 
 DEBUG = False
 TEMPLATE_DEBUG = False

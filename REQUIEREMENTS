@@ -3,4 +3,5 @@ psycopg2
 python-stdnum
 south
 numpy
-
+#Bo chcemy to instalować na debianie
+gunicorn==17.5
